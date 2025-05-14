@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'maven:3.8.5-openjdk-17'  // Specify the Maven and JDK Docker image
-            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Mount Docker socket to allow Docker commands inside the container
+            image 'maven:3.8.5-openjdk-17'  // Use Maven + OpenJDK image
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Mount the Docker socket from host to container
         }
     }
 
@@ -19,20 +19,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'  // Run Maven build, skipping tests for now
+                sh 'mvn clean package -DskipTests'  // Build the project using Maven
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'  // Build the Docker image with the specified tag
+                sh 'docker build -t $IMAGE_NAME .'  // Build Docker image
             }
         }
 
         stage('Docker Push') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com/repositories/niveditha223']) {
-                    sh 'docker push $IMAGE_NAME'  // Push the built image to Docker Hub
+                    sh 'docker push $IMAGE_NAME'  // Push the Docker image to Docker Hub
                 }
             }
         }
@@ -50,4 +50,5 @@ pipeline {
         }
     }
 }
+
 
