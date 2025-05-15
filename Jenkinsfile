@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.5-openjdk-17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = 'niveditha223/petclinic-app'
@@ -25,14 +20,14 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t $IMAGE_NAME ."
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Docker Push') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/']) {
-                    sh "docker push $IMAGE_NAME"
+                withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
+                    sh 'docker push $IMAGE_NAME'
                 }
             }
         }
@@ -50,4 +45,3 @@ pipeline {
         }
     }
 }
-
