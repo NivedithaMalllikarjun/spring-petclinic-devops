@@ -1,19 +1,18 @@
-# Base image with OpenJDK
+# Use OpenJDK 17 as the base image
 FROM openjdk:17-jdk-slim
 
-# Install Docker CLI (optional: only if needed for inner docker calls)
-USER root
-RUN apt-get update && \
-    apt-get install -y docker.io && \
-    apt-get clean
+# Set working directory
+WORKDIR /app
 
-# Create a volume for logs or temp files
+# Add a volume for temporary files (e.g., logs)
 VOLUME /tmp
 
-# Add the application's jar to the container
+# Copy the built jar file into the container
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 
-# Set the entry point
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# Expose port (if your app runs on a specific port)
+EXPOSE 8080
 
+# Run the Spring Boot application
+ENTRYPOINT ["java", "-jar", "app.jar"]
