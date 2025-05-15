@@ -1,38 +1,38 @@
 pipeline {
     agent {
         docker {
-            image 'maven:3.8.5-openjdk-17'  // Use Maven + OpenJDK image
-            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Mount the Docker socket from host to container
+            image 'maven:3.8.5-openjdk-17'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
     environment {
-        IMAGE_NAME = 'niveditha223/petclinic-app'  // Define your Docker image name
+        IMAGE_NAME = 'niveditha223/petclinic-app'
     }
 
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/NivedithaMalllikarjun/spring-petclinic-devops.git'  // Clone the repo
+                git branch: 'main', url: 'https://github.com/NivedithaMalllikarjun/spring-petclinic-devops.git'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'  // Build the project using Maven
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'  // Build Docker image
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
 
         stage('Docker Push') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerhub-creds', url: 'https://hub.docker.com/repositories/niveditha223']) {
-                    sh 'docker push $IMAGE_NAME'  // Push the Docker image to Docker Hub
+                withDockerRegistry([credentialsId: 'dockerhub-creds', url: 'https://index.docker.io/v1/']) {
+                    sh "docker push $IMAGE_NAME"
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
 
     post {
         always {
-            cleanWs()  // Clean up workspace after each run
+            cleanWs()
         }
         success {
             echo "Build and push to Docker Hub successful!"
@@ -50,5 +50,4 @@ pipeline {
         }
     }
 }
-
 
