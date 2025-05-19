@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-petclinic-svc
+spec:
+  selector:
+    app: spring-petclinic
+  ports:
+    - port: 80          # cluster‑internal port
+      targetPort: 9090  # forwarded to container
+  type: LoadBalancer     # change to NodePort if your cluster doesn’t support LB
